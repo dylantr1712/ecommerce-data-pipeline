@@ -1,0 +1,9 @@
+boto3
+pyspark
+pandas
+apache-airflow
+dbt-core
+dbt-redshift
+psycopg2-binary
+python-dotenv
+requests
