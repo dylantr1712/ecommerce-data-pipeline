@@ -1,0 +1,205 @@
+Project ecommerce_warehouse {
+  database_type: "PostgreSQL"
+  Note: "Final warehouse star schema for ecommerce analytics, dbt target model, SCD Type 2 on dim_customers"
+}
+
+Table dim_customers {
+  customer_key bigint [pk, increment]
+  customer_id varchar(32) [not null]
+  customer_unique_id varchar(32) [not null]
+  customer_zip_code_prefix int
+  customer_city varchar(64)
+  customer_state varchar(2)
+
+  effective_date date [not null]
+  end_date date
+  is_current boolean [not null, default: true]
+
+  indexes {
+    customer_id
+    customer_unique_id
+    (customer_id, is_current)
+  }
+
+  Note: "SCD Type 2 dimension. customer_key is surrogate key. customer_id is business key."
+}
+
+Table dim_products {
+  product_key bigint [pk, increment]
+  product_id varchar(32) [not null]
+  product_category_name varchar(64)
+  product_category_name_english varchar(64)
+  product_name_lenght int
+  product_description_lenght int
+  product_photos_qty int
+  product_weight_g decimal(10,2)
+  product_length_cm decimal(10,2)
+  product_height_cm decimal(10,2)
+  product_width_cm decimal(10,2)
+
+  indexes {
+    product_id [unique]
+    product_category_name_english
+  }
+}
+
+Table dim_sellers {
+  seller_key bigint [pk, increment]
+  seller_id varchar(32) [not null]
+  seller_zip_code_prefix int
+  seller_city varchar(64)
+  seller_state varchar(2)
+
+  indexes {
+    seller_id [unique]
+    seller_state
+  }
+}
+
+Table dim_order_status {
+  order_status_key int [pk, increment]
+  order_status varchar(20) [not null, unique]
+
+  Note: "Lookup dimension for order lifecycle status"
+}
+
+Table dim_payment_type {
+  payment_type_key int [pk, increment]
+  payment_type varchar(20) [not null, unique]
+
+  Note: "Lookup dimension for payment type"
+}
+
+Table dim_date {
+  date_key int [pk]
+  full_date date [not null, unique]
+  day_of_month int [not null]
+  day_of_week int [not null]
+  day_name varchar(10) [not null]
+  week_of_year int [not null]
+  month_number int [not null]
+  month_name varchar(10) [not null]
+  quarter_number int [not null]
+  year_number int [not null]
+  is_weekend boolean [not null]
+
+  Note: "Standard date dimension. date_key format: YYYYMMDD"
+}
+
+Table fct_order_items {
+  order_item_fact_key bigint [pk, increment]
+
+  order_id varchar(32) [not null]
+  order_item_id int [not null]
+
+  customer_key bigint [not null]
+  product_key bigint [not null]
+  seller_key bigint [not null]
+  order_status_key int [not null]
+
+  purchase_date_key int [not null]
+  approved_date_key int
+  shipping_limit_date_key int
+  delivered_carrier_date_key int
+  delivered_customer_date_key int
+  estimated_delivery_date_key int
+
+  price decimal(10,2) [not null]
+  freight_value decimal(10,2) [not null]
+  total_item_value decimal(10,2) [not null]
+
+  item_count int [not null, default: 1]
+
+  indexes {
+    (order_id, order_item_id) [unique]
+    customer_key
+    product_key
+    seller_key
+    purchase_date_key
+  }
+
+  Note: "Main sales fact. Grain = 1 row per order item."
+}
+
+Table fct_order_payments {
+  order_payment_fact_key bigint [pk, increment]
+
+  order_id varchar(32) [not null]
+  payment_sequential int [not null]
+
+  customer_key bigint [not null]
+  order_status_key int [not null]
+  payment_type_key int [not null]
+
+  purchase_date_key int [not null]
+  approved_date_key int
+
+  payment_installments int [not null]
+  payment_value decimal(10,2) [not null]
+
+  payment_count int [not null, default: 1]
+
+  indexes {
+    (order_id, payment_sequential) [unique]
+    customer_key
+    payment_type_key
+    purchase_date_key
+  }
+
+  Note: "Separate payment fact. Grain = 1 row per payment transaction."
+}
+
+Table fct_order_reviews {
+  order_review_fact_key bigint [pk, increment]
+
+  review_id varchar(32) [not null]
+  order_id varchar(32) [not null]
+
+  customer_key bigint [not null]
+  order_status_key int [not null]
+
+  purchase_date_key int [not null]
+  delivered_customer_date_key int
+  review_creation_date_key int [not null]
+  review_answer_date_key int [not null]
+
+  review_score int [not null]
+  has_review_comment boolean [not null]
+
+  indexes {
+    (review_id, order_id) [unique]
+    customer_key
+    review_creation_date_key
+    review_score
+  }
+
+  Note: "Review fact. Grain = 1 row per review record."
+}
+
+/*
+Relationships
+*/
+
+Ref: fct_order_items.customer_key > dim_customers.customer_key
+Ref: fct_order_items.product_key > dim_products.product_key
+Ref: fct_order_items.seller_key > dim_sellers.seller_key
+Ref: fct_order_items.order_status_key > dim_order_status.order_status_key
+Ref: fct_order_items.purchase_date_key > dim_date.date_key
+Ref: fct_order_items.approved_date_key > dim_date.date_key
+Ref: fct_order_items.shipping_limit_date_key > dim_date.date_key
+Ref: fct_order_items.delivered_carrier_date_key > dim_date.date_key
+Ref: fct_order_items.delivered_customer_date_key > dim_date.date_key
+Ref: fct_order_items.estimated_delivery_date_key > dim_date.date_key
+
+Ref: fct_order_payments.customer_key > dim_customers.customer_key
+Ref: fct_order_payments.order_status_key > dim_order_status.order_status_key
+Ref: fct_order_payments.payment_type_key > dim_payment_type.payment_type_key
+Ref: fct_order_payments.purchase_date_key > dim_date.date_key
+Ref: fct_order_payments.approved_date_key > dim_date.date_key
+
+Ref: fct_order_reviews.customer_key > dim_customers.customer_key
+Ref: fct_order_reviews.order_status_key > dim_order_status.order_status_key
+Ref: fct_order_reviews.purchase_date_key > dim_date.date_key
+Ref: fct_order_reviews.delivered_customer_date_key > dim_date.date_key
+Ref: fct_order_reviews.review_creation_date_key > dim_date.date_key
+Ref: fct_order_reviews.review_answer_date_key > dim_date.date_key

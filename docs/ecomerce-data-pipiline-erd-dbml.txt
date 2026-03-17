@@ -1,0 +1,105 @@
+Table customers {
+  customer_id varchar(32) [pk]
+  customer_unique_id varchar(32) [not null]
+  customer_zip_code_prefix int [not null]
+  customer_city varchar(64) [not null]
+  customer_state varchar(2) [not null]
+
+  indexes {
+    customer_unique_id
+  }
+}
+
+Table sellers {
+  seller_id varchar(32) [pk]
+  seller_zip_code_prefix int [not null]
+  seller_city varchar(64) [not null]
+  seller_state varchar(2) [not null]
+}
+
+Table product_category_name_translation {
+  product_category_name varchar(64) [pk]
+  product_category_name_english varchar(64) [not null]
+}
+
+Table products {
+  product_id varchar(32) [pk]
+  product_category_name varchar(64)
+  product_name_lenght int
+  product_description_lenght int
+  product_photos_qty int
+  product_weight_g decimal(10,2)
+  product_length_cm decimal(10,2)
+  product_height_cm decimal(10,2)
+  product_width_cm decimal(10,2)
+}
+
+Table orders {
+  order_id varchar(32) [pk]
+  customer_id varchar(32) [not null]
+  order_status varchar(20) [not null]
+  order_purchase_timestamp datetime [not null]
+  order_approved_at datetime
+  order_delivered_carrier_date datetime
+  order_delivered_customer_date datetime
+  order_estimated_delivery_date datetime [not null]
+
+  indexes {
+    customer_id
+    order_status
+    order_purchase_timestamp
+  }
+}
+
+Table order_items {
+  order_id varchar(32) [not null]
+  order_item_id int [not null]
+  product_id varchar(32) [not null]
+  seller_id varchar(32) [not null]
+  shipping_limit_date datetime [not null]
+  price decimal(10,2) [not null]
+  freight_value decimal(10,2) [not null]
+
+  indexes {
+    (order_id, order_item_id) [pk]
+    product_id
+    seller_id
+  }
+}
+
+Table order_payments {
+  order_id varchar(32) [not null]
+  payment_sequential int [not null]
+  payment_type varchar(20) [not null]
+  payment_installments int [not null]
+  payment_value decimal(10,2) [not null]
+
+  indexes {
+    (order_id, payment_sequential) [pk]
+    payment_type
+  }
+}
+
+Table order_reviews {
+  review_id varchar(32) [not null]
+  order_id varchar(32) [not null]
+  review_score int [not null]
+  review_comment_title varchar(64)
+  review_comment_message varchar(512)
+  review_creation_date datetime [not null]
+  review_answer_timestamp datetime [not null]
+
+  indexes {
+    (review_id, order_id) [pk]
+    order_id
+    review_score
+  }
+}
+
+Ref: products.product_category_name > product_category_name_translation.product_category_name
+Ref: orders.customer_id > customers.customer_id
+Ref: order_items.order_id > orders.order_id
+Ref: order_items.product_id > products.product_id
+Ref: order_items.seller_id > sellers.seller_id
+Ref: order_payments.order_id > orders.order_id
+Ref: order_reviews.order_id > orders.order_id
