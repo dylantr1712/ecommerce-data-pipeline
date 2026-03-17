@@ -1,0 +1,14 @@
+2026-03-17 23:09:43,458 | INFO | Starting Bronze ingestion to S3...
+2026-03-17 23:09:43,458 | INFO | Bucket: dylan-ecommerce-data-pipeline
+2026-03-17 23:09:43,458 | INFO | Prefix: bronze
+2026-03-17 23:09:43,463 | INFO | Source dir: C:\Project MDS\ecommerce-data-pipeline\data\source
+2026-03-17 23:09:43,481 | INFO | Found credentials in shared credentials file: ~/.aws/credentials
+2026-03-17 23:09:45,447 | INFO | Uploaded: data\source\customers.csv -> s3://dylan-ecommerce-data-pipeline/bronze/customers/customers.csv
+2026-03-17 23:09:49,037 | INFO | Uploaded: data\source\orders.csv -> s3://dylan-ecommerce-data-pipeline/bronze/orders/orders.csv
+2026-03-17 23:09:52,036 | INFO | Uploaded: data\source\order_items.csv -> s3://dylan-ecommerce-data-pipeline/bronze/order_items/order_items.csv
+2026-03-17 23:09:53,066 | INFO | Uploaded: data\source\order_payments.csv -> s3://dylan-ecommerce-data-pipeline/bronze/order_payments/order_payments.csv
+2026-03-17 23:09:55,735 | INFO | Uploaded: data\source\order_reviews.csv -> s3://dylan-ecommerce-data-pipeline/bronze/order_reviews/order_reviews.csv
+2026-03-17 23:09:56,204 | INFO | Uploaded: data\source\products.csv -> s3://dylan-ecommerce-data-pipeline/bronze/products/products.csv
+2026-03-17 23:09:56,306 | INFO | Uploaded: data\source\sellers.csv -> s3://dylan-ecommerce-data-pipeline/bronze/sellers/sellers.csv
+2026-03-17 23:09:56,368 | INFO | Uploaded: data\source\product_category_name_translation.csv -> s3://dylan-ecommerce-data-pipeline/bronze/product_category_name_translation/product_category_name_translation.csv
+2026-03-17 23:09:56,368 | INFO | Finished Bronze ingestion. Uploaded=8 Failed=0
