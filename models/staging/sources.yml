@@ -1,0 +1,15 @@
+version: 2
+
+sources:
+  - name: ecommerce
+    database: dev
+    schema: staging
+    tables:
+      - name: stg_customers_raw
+      - name: stg_orders_raw
+      - name: stg_order_items_raw
+      - name: stg_order_payments_raw
+      - name: stg_order_reviews_raw
+      - name: stg_products_raw
+      - name: stg_sellers_raw
+      - name: stg_product_category_translation_raw

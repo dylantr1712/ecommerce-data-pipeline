@@ -1,5 +1,11 @@
+@@ -1,5 +1,4 @@
 # Virtual environment
 .venv/
 
 # Env files
 .env
+
+target/
+dbt_packages/
+logs/
+
