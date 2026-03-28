@@ -1,5 +1,4 @@
-@ -1,270 +1,15 @@
-# 🚀 Ecommerce Data Pipeline
+# Ecommerce Data Pipeline
 Welcome to your new dbt project!
 
 ## 1. Introduction
