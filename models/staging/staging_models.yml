@@ -1,0 +1,161 @@
+version: 2
+
+models:
+  - name: stg_customers
+    description: Cleaned staging model for ecommerce customers.
+    columns:
+      - name: customer_id
+        description: Unique identifier for each customer record.
+        tests:
+          - not_null
+          - unique
+
+      - name: customer_unique_id
+        description: Business-level customer identifier shared across customer records.
+        tests:
+          - not_null
+
+      - name: customer_city
+        description: Customer city.
+
+      - name: customer_state
+        description: Customer state.
+
+  - name: stg_orders
+    description: Cleaned staging model for ecommerce orders.
+    columns:
+      - name: order_id
+        description: Unique identifier for each order.
+        tests:
+          - not_null
+          - unique
+
+      - name: customer_id
+        description: Customer associated with the order.
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_customers')
+              field: customer_id
+
+      - name: order_status
+        description: Current order status.
+
+  - name: stg_order_items
+    description: Cleaned staging model for ecommerce order items.
+    columns:
+      - name: order_id
+        description: Order identifier.
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_orders')
+              field: order_id
+
+      - name: order_item_id
+        description: Sequential item number within an order.
+        tests:
+          - not_null
+
+      - name: product_id
+        description: Product identifier.
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_products')
+              field: product_id
+
+      - name: seller_id
+        description: Seller identifier.
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_sellers')
+              field: seller_id
+
+      - name: price
+        description: Item price.
+
+      - name: freight_value
+        description: Freight value for the item.
+
+  - name: stg_order_payments
+    description: Cleaned staging model for ecommerce order payments.
+    columns:
+      - name: order_id
+        description: Order identifier.
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_orders')
+              field: order_id
+
+      - name: payment_sequential
+        description: Sequential payment number within an order.
+        tests:
+          - not_null
+
+      - name: payment_type
+        description: Payment method used.
+
+      - name: payment_value
+        description: Payment amount.
+
+  - name: stg_order_reviews
+    description: Cleaned staging model for ecommerce order reviews.
+    columns:
+      - name: review_id
+        description: Unique identifier for each review.
+        tests:
+          - not_null
+          - unique
+
+      - name: order_id
+        description: Order associated with the review.
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_orders')
+              field: order_id
+
+      - name: review_score
+        description: Customer review score.
+
+  - name: stg_products
+    description: Cleaned staging model for ecommerce products.
+    columns:
+      - name: product_id
+        description: Unique product identifier.
+        tests:
+          - not_null
+          - unique
+
+      - name: product_category_name
+        description: Original product category name.
+
+  - name: stg_sellers
+    description: Cleaned staging model for ecommerce sellers.
+    columns:
+      - name: seller_id
+        description: Unique seller identifier.
+        tests:
+          - not_null
+          - unique
+
+      - name: seller_city
+        description: Seller city.
+
+      - name: seller_state
+        description: Seller state.
+
+  - name: stg_product_category_translation
+    description: Cleaned staging model for product category translations.
+    columns:
+      - name: product_category_name
+        description: Original product category name.
+        tests:
+          - not_null
+          - unique
+
+      - name: product_category_name_english
+        description: English translation of product category name.
