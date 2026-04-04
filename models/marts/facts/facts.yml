@@ -1,0 +1,117 @@
+version: 2
+
+models:
+  - name: fct_order_items
+    description: Main sales fact table at grain of one row per order item.
+    columns:
+      - name: order_item_fact_key
+        description: Surrogate key for the fact row.
+        tests:
+          - not_null
+          - unique
+
+      - name: order_id
+        description: Business key for the order.
+        tests:
+          - not_null
+
+      - name: order_item_id
+        description: Line item identifier within the order.
+        tests:
+          - not_null
+
+      - name: customer_id
+        description: Temporary natural customer key until SCD2 customer dimension is implemented.
+        tests:
+          - not_null
+
+      - name: product_key
+        description: Foreign key to dim_products.
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_products')
+                field: product_key
+
+      - name: seller_key
+        description: Foreign key to dim_sellers.
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_sellers')
+                field: seller_key
+
+      - name: order_status_key
+        description: Foreign key to dim_order_status.
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_order_status')
+                field: order_status_key
+
+      - name: purchase_date_key
+        description: Foreign key to dim_date for order purchase date.
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+
+      - name: approved_date_key
+        description: Foreign key to dim_date for order approval date.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+
+      - name: shipping_limit_date_key
+        description: Foreign key to dim_date for shipping limit date.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+
+      - name: delivered_carrier_date_key
+        description: Foreign key to dim_date for delivered to carrier date.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+
+      - name: delivered_customer_date_key
+        description: Foreign key to dim_date for customer delivery date.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+
+      - name: estimated_delivery_date_key
+        description: Foreign key to dim_date for estimated delivery date.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+
+      - name: price
+        description: Product sale price for the order item.
+        tests:
+          - not_null
+
+      - name: freight_value
+        description: Freight cost for the order item.
+        tests:
+          - not_null
+
+      - name: total_item_value
+        description: Total item value including freight.
+        tests:
+          - not_null
