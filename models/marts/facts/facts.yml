@@ -20,10 +20,14 @@ models:
         tests:
           - not_null
 
-      - name: customer_id
-        description: Temporary natural customer key until SCD2 customer dimension is implemented.
+      - name: customer_key
+        description: Foreign key to dim_customers using SCD Type 2 effective dating.
         tests:
           - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_customers')
+                field: customer_key
 
       - name: product_key
         description: Foreign key to dim_products.

@@ -7,6 +7,13 @@ with order_items as (
 
 ),
 
+dim_customers as (
+
+    select *
+    from {{ ref('dim_customers') }}
+
+),
+
 dim_products as (
 
     select *
@@ -36,9 +43,7 @@ final as (
         oi.order_id,
         oi.order_item_id,
 
-        -- temporary natural key until dim_customers SCD2 is implemented
-        oi.customer_id,
-
+        dc.customer_key,
         dp.product_key,
         ds.seller_key,
         dos.order_status_key,
@@ -82,6 +87,9 @@ final as (
         1 as item_count
 
     from order_items oi
+    left join dim_customers dc
+        on oi.customer_id = dc.customer_id
+       and dc.is_current = true
     left join dim_products dp
         on oi.product_id = dp.product_id
     left join dim_sellers ds
