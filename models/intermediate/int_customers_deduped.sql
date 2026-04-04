@@ -16,6 +16,7 @@ deduplicated as (
         customer_city,
         customer_state,
         ingestion_timestamp,
+        cast(ingestion_timestamp as date) as record_effective_date,
         source_file_name,
 
         md5(
@@ -41,6 +42,7 @@ select
     customer_city,
     customer_state,
     ingestion_timestamp,
+    record_effective_date,
     source_file_name,
     customer_attr_hash
 from deduplicated
