@@ -119,3 +119,135 @@ models:
         description: Total item value including freight.
         tests:
           - not_null
+
+      - name: fct_order_payments
+    description: Payment fact table at grain of one row per payment transaction.
+    columns:
+      - name: order_payment_fact_key
+        tests:
+          - not_null
+          - unique
+
+      - name: order_id
+        tests:
+          - not_null
+
+      - name: payment_sequential
+        tests:
+          - not_null
+
+      - name: customer_key
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_customers')
+                field: customer_key
+
+      - name: order_status_key
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_order_status')
+                field: order_status_key
+
+      - name: payment_type_key
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_payment_type')
+                field: payment_type_key
+
+      - name: purchase_date_key
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+
+      - name: approved_date_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+
+      - name: payment_installments
+        tests:
+          - not_null
+
+      - name: payment_value
+        tests:
+          - not_null
+
+  - name: fct_order_reviews
+    description: Review fact table at grain of one row per review record.
+    columns:
+      - name: order_review_fact_key
+        tests:
+          - not_null
+          - unique
+
+      - name: review_id
+        tests:
+          - not_null
+
+      - name: order_id
+        tests:
+          - not_null
+
+      - name: customer_key
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_customers')
+                field: customer_key
+
+      - name: order_status_key
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_order_status')
+                field: order_status_key
+
+      - name: purchase_date_key
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+
+      - name: delivered_customer_date_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+
+      - name: review_creation_date_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+
+      - name: review_answer_date_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+
+      - name: review_score
+        tests:
+          - not_null
+
+      - name: has_review_comment
+        tests:
+          - not_null
