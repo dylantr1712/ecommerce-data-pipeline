@@ -2,10 +2,10 @@ from datetime import datetime, timedelta
 
 from airflow import DAG
 from airflow.models import Variable
-from airflow.operators.bash import BashOperator
+from airflow.providers.standard.operators.bash import BashOperator
 from airflow.providers.amazon.aws.operators.emr import EmrServerlessStartJobOperator
 from airflow.providers.slack.operators.slack_webhook import SlackWebhookOperator
-from airflow.utils.trigger_rule import TriggerRule
+from airflow.task.trigger_rule import TriggerRule
 
 default_args = {
     "owner": "dylan",
@@ -18,15 +18,22 @@ AWS_CONN_ID = "aws_default"
 SLACK_CONN_ID = "slack_webhook_default"
 
 S3_BUCKET = Variable.get("S3_BUCKET", default_var="dylan-ecommerce-data-pipeline")
+
 EMR_APPLICATION_ID = Variable.get(
     "EMR_SERVERLESS_APPLICATION_ID",
     default_var="00g4avib4vajvb29",
 )
-EMR_EXECUTION_ROLE_ARN = Variable.get("EMR_EXECUTION_ROLE_ARN")
+
+EMR_EXECUTION_ROLE_ARN = Variable.get(
+    "EMR_EXECUTION_ROLE_ARN",
+    default_var="",
+)
+
 EMR_LOG_URI = Variable.get(
     "EMR_LOG_URI",
     default_var=f"s3://{S3_BUCKET}/logs/emr/",
 )
+
 SPARK_SCRIPT_URI = Variable.get(
     "SPARK_SCRIPT_URI",
     default_var=f"s3://{S3_BUCKET}/scripts/bronze_to_silver.py",
