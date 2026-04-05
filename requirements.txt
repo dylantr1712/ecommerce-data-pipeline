@@ -7,3 +7,7 @@ dbt-redshift
 psycopg2-binary
 python-dotenv
 requests
+redshift-connector
+apache-airflow 
+apache-airflow-providers-amazon 
+apache-airflow-providers-slack
