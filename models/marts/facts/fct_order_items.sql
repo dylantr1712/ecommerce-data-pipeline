@@ -93,7 +93,6 @@ final as (
         on oi.seller_id = ds.seller_id
     left join dim_order_status dos
         on oi.order_status = dos.order_status
-
 )
 
 select *
