@@ -2,7 +2,7 @@
 
 ## 1. Introduction
 
-This project implements the design and modelling phase of an end-to-end data engineering pipeline using an ecommerce OLTP dataset.
+This project implements the design and implementation of an end-to-end data engineering pipeline using an ecommerce OLTP dataset.
 
 The goal of the project is to transform raw transactional data into a scalable analytical data warehouse that enables business intelligence and analytics.
 
@@ -13,6 +13,7 @@ The pipeline demonstrates the architecture of a modern data stack including:
 - Cloud Data Warehouse
 - dbt-based transformations
 - Dimensional modelling
+- Workflow orchestration
 - Business Intelligence dashboards
 
 The dataset represents an ecommerce platform containing customer orders, payments, products, sellers, and reviews.
@@ -24,12 +25,14 @@ Key concepts demonstrated in this project include:
 - Star schema design
 - Slowly Changing Dimension (SCD Type 2)
 - Modern ELT architecture
-- Data pipeline design
+- Cloud-native data pipeline orchestration
 
+
+---
 
 # 2. Source Data (OLTP System)
 
-The dataset consists of 8 relational tables representing an ecommerce transactional system.
+The dataset consists of **8 relational tables** representing an ecommerce transactional system.
 
 ### Tables
 
@@ -50,11 +53,11 @@ The dataset consists of 8 relational tables representing an ecommerce transactio
 
 ### Key Characteristics
 
-The source schema follows a typical OLTP design:
+The source schema follows a typical **OLTP design**:
 
-- highly normalized
-- optimized for transactions
-- contains multiple one-to-many relationships
+- highly normalized  
+- optimized for transactions  
+- contains multiple one-to-many relationships  
 
 Example relationships:
 
@@ -65,15 +68,17 @@ Example relationships:
 While suitable for transactional workloads, this structure is not optimized for analytical queries because it requires heavy joins and can cause duplication in aggregations.
 
 
+---
+
 # 3. Architecture Design
 
-The pipeline is designed following a modern data engineering architecture.
+The pipeline is designed following a **modern cloud data engineering architecture**.
 
-CSV Dataset  
+Raw CSV Dataset  
 ↓  
 Amazon S3 (Bronze Layer)  
 ↓  
-Spark Processing  
+Spark Processing (EMR Serverless)  
 ↓  
 Amazon S3 (Silver Layer)  
 ↓  
@@ -81,108 +86,81 @@ Amazon Redshift (Data Warehouse)
 ↓  
 dbt Transformations  
 ↓  
-Power BI Dashboard  
+Analytics / BI Layer  
 
+Pipeline orchestration is handled by **Apache Airflow**, running locally through **Docker Compose**.
 
 ## Architecture Diagram
 
 ![Architecture](./architecture/pipeline_architecture.png)
 
 
-## Design Principles
-
-### Separation of Concerns
-
-Each stage of the pipeline has a clear responsibility:
-
-| Layer | Responsibility |
-|------|---------------|
-| Data Lake | raw data storage |
-| Spark Processing | schema validation and cleaning |
-| Data Warehouse | analytical storage |
-| dbt | data modelling and transformations |
-| BI | visualization and insights |
-
-
-### ELT Architecture
-
-The pipeline follows an ELT approach:
-
-1. Extract raw data
-2. Load into warehouse
-3. Transform using dbt
-
-This allows the data warehouse to perform scalable transformations.
-
-
-### Scalability
-
-Cloud-native components enable the pipeline to scale:
-
-- Object storage for large datasets
-- Distributed processing using Spark
-- Analytical warehouse for transformations
-
+---
 
 # 4. Data Lake
 
 ## Bronze Layer (Raw Data)
 
-Raw CSV files are ingested into Amazon S3 as the Bronze layer.
+Raw CSV files are ingested into **Amazon S3** as the Bronze layer using a Python ingestion script.
 
 Characteristics:
 
-- immutable storage
-- full historical traceability
-- schema preservation
+- immutable storage  
+- full historical traceability  
+- schema preservation  
 
 Example structure:
 
-data-lake/
-   bronze/
-      customers/
-      orders/
-      order_items/
-      products/
-      sellers/
-      payments/
-      reviews/
+```
+bronze/
+   customers/
+   orders/
+   order_items/
+   products/
+   sellers/
+   order_payments/
+   order_reviews/
+```
 
+---
 
-## Silver Layer (Light Transformations)
+## Silver Layer (Processed Data)
 
-Light transformations are applied using Spark before loading into the warehouse.
+Spark performs light transformations before loading into the warehouse.
 
 Transformations include:
 
-- schema validation
-- column normalization
-- basic data cleaning
-- format standardization
+- schema validation  
+- column normalization  
+- type casting  
+- basic data cleaning  
+- deduplication  
+- metadata column creation  
 
-The cleaned datasets are stored in the Silver layer before loading to Redshift.
+The cleaned datasets are stored as **Parquet files in the Silver layer** before loading into Redshift.
 
+
+---
 
 # 5. Data Warehouse
 
-The analytics warehouse is implemented using Amazon Redshift.
+The analytics warehouse is implemented using **Amazon Redshift**.
 
-Data modelling and transformations are managed using dbt.
-
+Data modelling and transformations are managed using **dbt**.
 
 ## dbt Transformation Layers
 
-The warehouse follows a layered dbt architecture:
-
-RAW  
-↓  
-STAGING  
-↓  
-INTERMEDIATE  
-↓  
-DIMENSIONS  
-↓  
-FACTS  
+```
+RAW
+  ↓
+STAGING
+  ↓
+INTERMEDIATE
+  ↓
+DIMENSIONS
+  ↓
+FACTS
+```
 
 
 ### Staging Layer
@@ -191,16 +169,16 @@ Standardizes raw source data.
 
 Examples:
 
-- stg_orders
-- stg_customers
-- stg_order_items
-- stg_products
+- stg_orders  
+- stg_customers  
+- stg_order_items  
+- stg_products  
 
 Responsibilities:
 
-- column renaming
-- type casting
-- basic cleaning
+- column renaming  
+- type casting  
+- basic cleaning  
 
 
 ### Intermediate Layer
@@ -209,50 +187,85 @@ Intermediate models prepare datasets for dimensional modelling.
 
 Examples:
 
-- int_orders_enriched
-- int_order_items_enriched
-- int_products_enriched
-- int_customers_deduped
+- int_orders_enriched  
+- int_order_items_enriched  
+- int_products_enriched  
+- int_customers_deduped  
 
 Responsibilities:
 
-- deduplication
-- enrichment
-- business logic
+- deduplication  
+- enrichment  
+- business logic  
 
 
-# 6. Final Data Model (Star Schema)
+---
 
-The warehouse uses a star schema optimized for analytics.
+# 6. Slowly Changing Dimension (SCD Type 2)
 
+Customer history tracking is implemented using **dbt snapshots**.
+
+Instead of manually implementing SCD Type 2 logic with SQL, the project uses dbt's built-in snapshot functionality to automatically track changes to dimensional attributes.
+
+The snapshot monitors changes to selected customer attributes such as:
+
+- customer_city  
+- customer_state  
+- customer_zip_code_prefix  
+
+When a change is detected, dbt automatically creates a new historical record while preserving previous versions.
+
+Snapshot records include:
+
+- dbt_valid_from  
+- dbt_valid_to  
+
+The **dim_customers** table then derives the analytical SCD fields:
+
+- effective_date  
+- end_date  
+- is_current  
+
+This approach simplifies SCD implementation and follows modern dbt best practices for maintaining historical dimensional data.
+
+
+---
+
+# 7. Final Data Model (Star Schema)
+
+The warehouse uses a **star schema optimized for analytical queries**.
 
 ## Star Schema Diagram
 
 ![Star Schema](./docs/dimensional-db-scdtype2-v1.png)
 
 
-## Fact Tables
+---
+
+# Fact Tables
 
 ### fct_order_items
 
 Primary sales dataset.
 
-Grain:  
+**Grain**
+
 1 row per product in an order
 
-Measures:
+**Measures**
 
-- price
-- freight_value
-- total_item_value
+- price  
+- freight_value  
+- total_item_value  
 
 
 ### fct_order_payments
 
 Captures payment behaviour.
 
-Grain:  
-1 row per payment transaction
+**Grain**
+
+1 row per payment transaction.
 
 Handles multiple payments per order.
 
@@ -261,13 +274,16 @@ Handles multiple payments per order.
 
 Stores customer feedback.
 
-Grain:  
-1 row per review
+**Grain**
+
+1 row per review.
 
 Supports analysis of customer satisfaction.
 
 
-## Dimension Tables
+---
+
+# Dimension Tables
 
 ### dim_customers (SCD Type 2)
 
@@ -275,23 +291,25 @@ Tracks historical changes in customer attributes.
 
 Key fields:
 
-- customer_key
-- customer_id
-- effective_date
-- end_date
-- is_current
+- customer_key  
+- customer_id  
+- effective_date  
+- end_date  
+- is_current  
 
 
 ### Other Dimensions
 
-- dim_products
-- dim_sellers
-- dim_order_status
-- dim_payment_type
-- dim_date
+- dim_products  
+- dim_sellers  
+- dim_order_status  
+- dim_payment_type  
+- dim_date  
 
 
-# 7. Record Counts (Example)
+---
+
+# 8. Record Counts (Example)
 
 | Table | Approx Rows |
 |------|-------------|
@@ -304,62 +322,86 @@ Key fields:
 | fct_order_reviews | ~100k |
 
 
-# 8. Project Structure
+---
 
+# 9. Project Structure
+
+```
 ecommerce-data-pipeline/
 
-airflow/
-   dags/
+dags/
+   ecommerce_pipeline.py
 
-spark/
-   processing scripts
+scripts/
+   ingestion/
+      upload_to_s3.py
+   spark/
+      bronze_to_silver.py
+   loaders/
+      run_redshift_sql.py
+
+sql/
+   schemas_and_tables_redshift.sql
+   load_parquet_redshift.sql
+
+models/
+   staging/
+   intermediate/
+   marts/
+      dimensions/
+      facts/
+
+snapshots/
+   customers_snapshot.sql
 
 data/
-   raw datasets
-
-dbt/
-   ecommerce_data_pipeline/
-      models/
-         staging/
-         intermediate/
-         marts/
-            dimensions/
-            facts/
-
-architecture/
-   pipeline diagrams
+   source/
 
 docs/
    ERD diagrams
 
-dashboards/
-   Power BI reports
+architecture/
+   pipeline diagrams
+
+docker-compose.yaml
+dbt_project.yml
+packages.yml
+requirements.txt
+```
 
 
-# 9. Tech Stack
+---
+
+# 10. Tech Stack
 
 | Tool | Responsibility |
 |-----|---------------|
-| Airflow | Pipeline orchestration |
+| Apache Airflow | Pipeline orchestration |
+| Docker | Local Airflow environment |
 | Amazon S3 | Data lake storage |
 | Apache Spark | Data processing |
+| EMR Serverless | Distributed Spark execution |
 | Amazon Redshift | Data warehouse |
 | dbt | Data modelling |
 | Power BI | Business intelligence |
 
 
-# 10. Business Use Cases
+---
+
+# 11. Business Use Cases
 
 The dimensional model supports the following analytics:
 
-- Revenue analysis by product or category
-- Customer purchasing behaviour
-- Seller performance tracking
-- Payment method analysis
-- Delivery performance vs customer reviews
+- Revenue analysis by product or category  
+- Customer purchasing behaviour  
+- Seller performance tracking  
+- Payment method analysis  
+- Delivery performance vs customer reviews  
 
 
-# 11. Example Business Recommendations
+---
+
+# 12. Example Business Recommendations
 
 ### Improve Delivery Performance
 
@@ -370,7 +412,9 @@ Analyze how delivery delays influence review scores and customer satisfaction.
 Evaluate whether installment plans increase order value and conversion rates.
 
 
-# 12. Challenges and Lessons Learned
+---
+
+# 13. Challenges and Lessons Learned
 
 ### Dimensional Modelling
 
@@ -378,19 +422,21 @@ Transforming normalized OLTP data into an analytical star schema required carefu
 
 ### SCD Type 2 Implementation
 
-Tracking historical customer changes required surrogate keys and effective date logic.
+Customer history tracking was implemented using **dbt snapshots**, simplifying the process of maintaining historical records compared to traditional SQL-based SCD logic.
 
 ### Data Quality
 
-Several fields contained missing timestamps or inconsistent values, requiring flexible modelling and data tests.
+Several fields contained missing timestamps or inconsistent values, requiring flexible modelling and data validation tests.
 
 
-# 13. Work in Progress
+---
 
-The following components are currently being implemented:
+# 14. Future Improvements
 
-- Airflow DAG orchestration
-- Slack pipeline notifications
-- Spark ingestion pipeline
-- Power BI dashboards
-- dbt lineage visualization
+Planned enhancements include:
+
+- Power BI dashboard development  
+- Additional dbt data quality tests  
+- Pipeline monitoring and alerting  
+- CI/CD integration  
+- Infrastructure-as-Code deployment  
