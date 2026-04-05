@@ -39,10 +39,8 @@ final as (
 
     select
         {{ dbt_utils.generate_surrogate_key(['oi.order_id', 'oi.order_item_id']) }} as order_item_fact_key,
-
         oi.order_id,
         oi.order_item_id,
-
         dc.customer_key,
         dp.product_key,
         ds.seller_key,
@@ -83,13 +81,12 @@ final as (
         oi.price,
         oi.freight_value,
         oi.total_item_value,
-
         1 as item_count
 
     from order_items oi
     left join dim_customers dc
         on oi.customer_id = dc.customer_id
-       and dc.is_current = true
+        and dc.is_current = true
     left join dim_products dp
         on oi.product_id = dp.product_id
     left join dim_sellers ds

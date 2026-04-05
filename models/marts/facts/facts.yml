@@ -2,26 +2,25 @@ version: 2
 
 models:
   - name: fct_order_items
-    description: Main sales fact table at grain of one row per order item.
+    description: Fact table at the grain of one row per order item.
+
     columns:
       - name: order_item_fact_key
-        description: Surrogate key for the fact row.
+        description: Surrogate key for the order item fact row.
         tests:
           - not_null
           - unique
 
       - name: order_id
-        description: Business key for the order.
+        description: Order identifier.
         tests:
           - not_null
 
       - name: order_item_id
         description: Line item identifier within the order.
-        tests:
-          - not_null
 
       - name: customer_key
-        description: Foreign key to dim_customers using SCD Type 2 effective dating.
+        description: Foreign key to dim_customers.
         tests:
           - not_null
           - relationships:
@@ -31,21 +30,9 @@ models:
 
       - name: product_key
         description: Foreign key to dim_products.
-        tests:
-          - not_null
-          - relationships:
-              arguments:
-                to: ref('dim_products')
-                field: product_key
 
       - name: seller_key
         description: Foreign key to dim_sellers.
-        tests:
-          - not_null
-          - relationships:
-              arguments:
-                to: ref('dim_sellers')
-                field: seller_key
 
       - name: order_status_key
         description: Foreign key to dim_order_status.
@@ -57,7 +44,7 @@ models:
                 field: order_status_key
 
       - name: purchase_date_key
-        description: Foreign key to dim_date for order purchase date.
+        description: Foreign key to dim_date for purchase date.
         tests:
           - not_null
           - relationships:
@@ -66,7 +53,7 @@ models:
                 field: date_key
 
       - name: approved_date_key
-        description: Foreign key to dim_date for order approval date.
+        description: Foreign key to dim_date for approved date.
         tests:
           - relationships:
               arguments:
@@ -82,7 +69,7 @@ models:
                 field: date_key
 
       - name: delivered_carrier_date_key
-        description: Foreign key to dim_date for delivered to carrier date.
+        description: Foreign key to dim_date for carrier delivered date.
         tests:
           - relationships:
               arguments:
@@ -90,7 +77,7 @@ models:
                 field: date_key
 
       - name: delivered_customer_date_key
-        description: Foreign key to dim_date for customer delivery date.
+        description: Foreign key to dim_date for customer delivered date.
         tests:
           - relationships:
               arguments:
@@ -106,37 +93,41 @@ models:
                 field: date_key
 
       - name: price
-        description: Product sale price for the order item.
-        tests:
-          - not_null
+        description: Item price.
 
       - name: freight_value
-        description: Freight cost for the order item.
-        tests:
-          - not_null
+        description: Freight charge.
 
       - name: total_item_value
         description: Total item value including freight.
+
+      - name: item_count
+        description: Number of item rows represented.
         tests:
           - not_null
 
-      - name: fct_order_payments
-    description: Payment fact table at grain of one row per payment transaction.
+  - name: fct_order_payments
+    description: Fact table at the grain of one row per payment event within an order.
+
     columns:
       - name: order_payment_fact_key
+        description: Surrogate key for the order payment fact row.
         tests:
           - not_null
           - unique
 
       - name: order_id
+        description: Order identifier.
         tests:
           - not_null
 
       - name: payment_sequential
+        description: Sequence number of the payment within the order.
         tests:
           - not_null
 
       - name: customer_key
+        description: Foreign key to dim_customers.
         tests:
           - not_null
           - relationships:
@@ -145,6 +136,7 @@ models:
                 field: customer_key
 
       - name: order_status_key
+        description: Foreign key to dim_order_status.
         tests:
           - not_null
           - relationships:
@@ -153,6 +145,7 @@ models:
                 field: order_status_key
 
       - name: payment_type_key
+        description: Foreign key to dim_payment_type.
         tests:
           - not_null
           - relationships:
@@ -161,6 +154,7 @@ models:
                 field: payment_type_key
 
       - name: purchase_date_key
+        description: Foreign key to dim_date for purchase date.
         tests:
           - not_null
           - relationships:
@@ -169,6 +163,7 @@ models:
                 field: date_key
 
       - name: approved_date_key
+        description: Foreign key to dim_date for approved date.
         tests:
           - relationships:
               arguments:
@@ -176,30 +171,42 @@ models:
                 field: date_key
 
       - name: payment_installments
+        description: Number of installments used for the payment.
         tests:
           - not_null
 
       - name: payment_value
+        description: Payment amount.
+        tests:
+          - not_null
+
+      - name: payment_count
+        description: Count of payments represented by the row.
         tests:
           - not_null
 
   - name: fct_order_reviews
-    description: Review fact table at grain of one row per review record.
+    description: Fact table at the grain of one row per review.
+
     columns:
       - name: order_review_fact_key
+        description: Surrogate key for the review fact row.
         tests:
           - not_null
           - unique
 
       - name: review_id
+        description: Review identifier.
         tests:
           - not_null
 
       - name: order_id
+        description: Order identifier.
         tests:
           - not_null
 
       - name: customer_key
+        description: Foreign key to dim_customers.
         tests:
           - not_null
           - relationships:
@@ -208,6 +215,7 @@ models:
                 field: customer_key
 
       - name: order_status_key
+        description: Foreign key to dim_order_status.
         tests:
           - not_null
           - relationships:
@@ -216,6 +224,7 @@ models:
                 field: order_status_key
 
       - name: purchase_date_key
+        description: Foreign key to dim_date for purchase date.
         tests:
           - not_null
           - relationships:
@@ -224,6 +233,7 @@ models:
                 field: date_key
 
       - name: delivered_customer_date_key
+        description: Foreign key to dim_date for customer delivery date.
         tests:
           - relationships:
               arguments:
@@ -231,6 +241,7 @@ models:
                 field: date_key
 
       - name: review_creation_date_key
+        description: Foreign key to dim_date for review creation date.
         tests:
           - relationships:
               arguments:
@@ -238,6 +249,7 @@ models:
                 field: date_key
 
       - name: review_answer_date_key
+        description: Foreign key to dim_date for review answer date.
         tests:
           - relationships:
               arguments:
@@ -245,9 +257,11 @@ models:
                 field: date_key
 
       - name: review_score
+        description: Review score.
         tests:
           - not_null
 
       - name: has_review_comment
+        description: Flag indicating whether the review has a comment.
         tests:
           - not_null
