@@ -39,6 +39,11 @@ SPARK_SCRIPT_URI = Variable.get(
     default_var=f"s3://{S3_BUCKET}/scripts/bronze_to_silver.py",
 )
 
+SPARK_LOCAL_SCRIPT = Variable.get(
+    "SPARK_LOCAL_SCRIPT",
+    default_var="scripts/spark/bronze_to_silver.py",
+)
+
 PROJECT_DIR = Variable.get("PROJECT_DIR", default_var="/opt/airflow/project")
 DBT_PROJECT_DIR = Variable.get("DBT_PROJECT_DIR", default_var="/opt/airflow/project")
 DBT_PROFILES_DIR = Variable.get("DBT_PROFILES_DIR", default_var="/opt/airflow/.dbt")
@@ -57,7 +62,15 @@ with DAG(
         task_id="upload_raw_csvs_to_s3",
         bash_command=f"""
         cd {PROJECT_DIR} && \
-        python scripts/ingestion/upload_to_s3.py
+        python3 scripts/ingestion/upload_to_s3.py
+        """,
+    )
+
+    upload_spark_script_to_s3 = BashOperator(
+        task_id="upload_spark_script_to_s3",
+        bash_command=f"""
+        cd {PROJECT_DIR} && \
+        aws s3 cp {SPARK_LOCAL_SCRIPT} {SPARK_SCRIPT_URI}
         """,
     )
 
@@ -92,7 +105,7 @@ with DAG(
         task_id="create_redshift_schemas_and_tables",
         bash_command=f"""
         cd {PROJECT_DIR} && \
-        python scripts/loaders/run_redshift_sql.py --sql-file sql/schemas_and_tables_redshift.sql
+        python3 scripts/loaders/run_redshift_sql.py --sql-file sql/schemas_and_tables_redshift.sql
         """,
     )
 
@@ -100,7 +113,7 @@ with DAG(
         task_id="load_silver_to_redshift",
         bash_command=f"""
         cd {PROJECT_DIR} && \
-        python scripts/loaders/run_redshift_sql.py --sql-file sql/load_parquet_redshift.sql
+        python3 scripts/loaders/run_redshift_sql.py --sql-file sql/load_parquet_redshift.sql
         """,
     )
 
@@ -136,6 +149,7 @@ with DAG(
 
 Completed:
 • Raw CSV ingestion to S3
+• Spark script upload to S3
 • Spark bronze-to-silver on EMR Serverless
 • Redshift schema/table creation
 • Silver-to-Redshift load
@@ -162,6 +176,7 @@ Check:
 
     (
         upload_raw_csvs_to_s3
+        >> upload_spark_script_to_s3
         >> run_spark_bronze_to_silver_emr
         >> create_redshift_schemas_and_tables
         >> load_silver_to_redshift
@@ -173,6 +188,7 @@ Check:
 
     [
         upload_raw_csvs_to_s3,
+        upload_spark_script_to_s3,
         run_spark_bronze_to_silver_emr,
         create_redshift_schemas_and_tables,
         load_silver_to_redshift,
