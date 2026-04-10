@@ -70,7 +70,7 @@ with DAG(
         task_id="upload_spark_script_to_s3",
         bash_command=f"""
         cd {PROJECT_DIR} && \
-        aws s3 cp {SPARK_LOCAL_SCRIPT} {SPARK_SCRIPT_URI}
+        python3 scripts/ingestion/upload_script_to_s3.py
         """,
     )
 

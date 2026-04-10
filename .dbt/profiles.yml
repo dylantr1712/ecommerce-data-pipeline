@@ -1,0 +1,14 @@
+ecommerce_data_pipeline:
+  target: dev
+  outputs:
+    dev:
+      type: redshift
+      host: "{{ env_var('REDSHIFT_HOST') }}"
+      user: "{{ env_var('REDSHIFT_USER') }}"
+      pass: "{{ env_var('REDSHIFT_PASSWORD') }}"
+      port: "{{ env_var('REDSHIFT_PORT', '5439') | int }}"
+      dbname: "{{ env_var('REDSHIFT_DATABASE') }}"
+      schema: analytics
+      threads: 4
+      keepalives_idle: 240
+      sslmode: prefer

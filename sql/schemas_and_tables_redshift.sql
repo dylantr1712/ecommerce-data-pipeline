@@ -1,7 +1,7 @@
 create schema if not exists staging;
 create schema if not exists analytics;
 
-create table staging.stg_orders_raw (
+create table if not exists staging.stg_orders_raw (
     order_id varchar(50),
     customer_id varchar(50),
     order_status varchar(30),
@@ -15,7 +15,7 @@ create table staging.stg_orders_raw (
 );
 
 
-create table staging.stg_customers_raw (
+create table if not exists staging.stg_customers_raw (
     customer_id varchar(50),
     customer_unique_id varchar(50),
     customer_zip_code_prefix varchar(20),
@@ -26,7 +26,7 @@ create table staging.stg_customers_raw (
 );
 
 
-create table staging.stg_order_items_raw (
+create table if not exists staging.stg_order_items_raw (
     order_id varchar(50),
     order_item_id integer,
     product_id varchar(50),
@@ -39,7 +39,7 @@ create table staging.stg_order_items_raw (
 );
 
 
-create table staging.stg_order_payments_raw (
+create table if not exists staging.stg_order_payments_raw (
     order_id varchar(50),
     payment_sequential integer,
     payment_type varchar(50),
@@ -49,7 +49,7 @@ create table staging.stg_order_payments_raw (
     source_file_name varchar(1000)
 );
 
-create table staging.stg_order_reviews_raw (
+create table if not exists staging.stg_order_reviews_raw (
     review_id varchar(50),
     order_id varchar(50),
     review_score integer,
@@ -61,7 +61,7 @@ create table staging.stg_order_reviews_raw (
     source_file_name varchar(1000)
 );
 
-create table staging.stg_products_raw (
+create table if not exists staging.stg_products_raw (
     product_id varchar(50),
     product_category_name varchar(100),
     product_name_lenght integer,
@@ -76,7 +76,7 @@ create table staging.stg_products_raw (
 );
 
 
-create table staging.stg_sellers_raw (
+create table if not exists staging.stg_sellers_raw (
     seller_id varchar(50),
     seller_zip_code_prefix varchar(20),
     seller_city varchar(100),
@@ -85,7 +85,7 @@ create table staging.stg_sellers_raw (
     source_file_name varchar(1000)
 );
 
-create table staging.stg_product_category_translation_raw (
+create table if not exists staging.stg_product_category_translation_raw (
     product_category_name varchar(100),
     product_category_name_english varchar(100),
     ingestion_timestamp timestamp,

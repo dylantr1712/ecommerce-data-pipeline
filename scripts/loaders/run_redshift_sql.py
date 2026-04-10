@@ -5,6 +5,15 @@ from pathlib import Path
 import redshift_connector
 
 
+def split_sql_statements(sql_text: str) -> list[str]:
+    statements = []
+    for statement in sql_text.split(";"):
+        stmt = statement.strip()
+        if stmt:
+            statements.append(stmt)
+    return statements
+
+
 def run_sql_file(sql_file: str) -> None:
     host = os.environ["REDSHIFT_HOST"]
     database = os.environ["REDSHIFT_DATABASE"]
@@ -17,6 +26,9 @@ def run_sql_file(sql_file: str) -> None:
         raise FileNotFoundError(f"SQL file not found: {sql_path}")
 
     sql_text = sql_path.read_text(encoding="utf-8")
+    statements = split_sql_statements(sql_text)
+    if not statements:
+        raise ValueError(f"No SQL statements found in: {sql_path}")
 
     conn = redshift_connector.connect(
         host=host,
@@ -29,10 +41,14 @@ def run_sql_file(sql_file: str) -> None:
     try:
         with conn:
             with conn.cursor() as cursor:
-                cursor.execute(sql_text)
+                for stmt in statements:
+                    cursor.execute(stmt)
         print(f"Successfully executed: {sql_path}")
     finally:
-        conn.close()
+        try:
+            conn.close()
+        except Exception:
+            pass
 
 
 if __name__ == "__main__":

@@ -6,7 +6,12 @@ from pathlib import Path
 import boto3
 from botocore.exceptions import ClientError, NoCredentialsError
 
-BUCKET_NAME = os.getenv("S3_BUCKET_NAME", "dylan-ecommerce-data-pipeline")
+BUCKET_NAME = (
+    os.getenv("AWS_S3_BUCKET_NAME")
+    or os.getenv("S3_BUCKET_NAME")
+    or os.getenv("S3_BUCKET")
+    or "dylan-ecommerce-data-pipeline"
+)
 S3_PREFIX = os.getenv("S3_BRONZE_PREFIX", "bronze")
 LOCAL_SOURCE_DIR = Path(os.getenv("LOCAL_SOURCE_DIR", "data/source"))
 
