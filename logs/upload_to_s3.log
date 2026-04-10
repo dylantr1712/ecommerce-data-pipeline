@@ -96,3 +96,87 @@
 2026-04-10 06:48:26,767 | INFO | Uploaded: data/source/sellers.csv -> s3://dylan-ecommerce-data-pipeline/bronze/sellers/sellers.csv
 2026-04-10 06:48:26,842 | INFO | Uploaded: data/source/product_category_name_translation.csv -> s3://dylan-ecommerce-data-pipeline/bronze/product_category_name_translation/product_category_name_translation.csv
 2026-04-10 06:48:26,843 | INFO | Finished Bronze ingestion. Uploaded=8 Failed=0
+2026-04-10 07:10:40,523 | INFO | Starting Bronze ingestion to S3...
+2026-04-10 07:10:40,523 | INFO | Bucket: dylan-ecommerce-data-pipeline
+2026-04-10 07:10:40,523 | INFO | Prefix: bronze
+2026-04-10 07:10:40,526 | INFO | Source dir: /opt/airflow/project/data/source
+2026-04-10 07:10:40,535 | INFO | Found credentials in environment variables.
+2026-04-10 07:10:42,642 | INFO | Uploaded: data/source/customers.csv -> s3://dylan-ecommerce-data-pipeline/bronze/customers/customers.csv
+2026-04-10 07:10:45,926 | INFO | Uploaded: data/source/orders.csv -> s3://dylan-ecommerce-data-pipeline/bronze/orders/orders.csv
+2026-04-10 07:10:48,773 | INFO | Uploaded: data/source/order_items.csv -> s3://dylan-ecommerce-data-pipeline/bronze/order_items/order_items.csv
+2026-04-10 07:10:49,837 | INFO | Uploaded: data/source/order_payments.csv -> s3://dylan-ecommerce-data-pipeline/bronze/order_payments/order_payments.csv
+2026-04-10 07:10:52,513 | INFO | Uploaded: data/source/order_reviews.csv -> s3://dylan-ecommerce-data-pipeline/bronze/order_reviews/order_reviews.csv
+2026-04-10 07:10:52,981 | INFO | Uploaded: data/source/products.csv -> s3://dylan-ecommerce-data-pipeline/bronze/products/products.csv
+2026-04-10 07:10:53,074 | INFO | Uploaded: data/source/sellers.csv -> s3://dylan-ecommerce-data-pipeline/bronze/sellers/sellers.csv
+2026-04-10 07:10:53,142 | INFO | Uploaded: data/source/product_category_name_translation.csv -> s3://dylan-ecommerce-data-pipeline/bronze/product_category_name_translation/product_category_name_translation.csv
+2026-04-10 07:10:53,143 | INFO | Finished Bronze ingestion. Uploaded=8 Failed=0
+2026-04-10 07:21:10,633 | INFO | Starting Bronze ingestion to S3...
+2026-04-10 07:21:10,633 | INFO | Bucket: dylan-ecommerce-data-pipeline
+2026-04-10 07:21:10,634 | INFO | Prefix: bronze
+2026-04-10 07:21:10,638 | INFO | Source dir: /opt/airflow/project/data/source
+2026-04-10 07:21:10,652 | INFO | Found credentials in environment variables.
+2026-04-10 07:21:10,682 | INFO | Starting Bronze ingestion to S3...
+2026-04-10 07:21:10,683 | INFO | Starting Bronze ingestion to S3...
+2026-04-10 07:21:10,683 | INFO | Bucket: dylan-ecommerce-data-pipeline
+2026-04-10 07:21:10,683 | INFO | Bucket: dylan-ecommerce-data-pipeline
+2026-04-10 07:21:10,683 | INFO | Prefix: bronze
+2026-04-10 07:21:10,683 | INFO | Prefix: bronze
+2026-04-10 07:21:10,685 | INFO | Source dir: /opt/airflow/project/data/source
+2026-04-10 07:21:10,686 | INFO | Source dir: /opt/airflow/project/data/source
+2026-04-10 07:21:10,699 | INFO | Found credentials in environment variables.
+2026-04-10 07:21:10,699 | INFO | Found credentials in environment variables.
+2026-04-10 07:21:10,702 | INFO | Starting Bronze ingestion to S3...
+2026-04-10 07:21:10,703 | INFO | Bucket: dylan-ecommerce-data-pipeline
+2026-04-10 07:21:10,703 | INFO | Prefix: bronze
+2026-04-10 07:21:10,708 | INFO | Source dir: /opt/airflow/project/data/source
+2026-04-10 07:21:10,711 | INFO | Starting Bronze ingestion to S3...
+2026-04-10 07:21:10,711 | INFO | Bucket: dylan-ecommerce-data-pipeline
+2026-04-10 07:21:10,711 | INFO | Prefix: bronze
+2026-04-10 07:21:10,715 | INFO | Source dir: /opt/airflow/project/data/source
+2026-04-10 07:21:10,722 | INFO | Found credentials in environment variables.
+2026-04-10 07:21:10,731 | INFO | Found credentials in environment variables.
+2026-04-10 07:21:17,616 | INFO | Uploaded: data/source/customers.csv -> s3://dylan-ecommerce-data-pipeline/bronze/customers/customers.csv
+2026-04-10 07:21:17,966 | INFO | Uploaded: data/source/customers.csv -> s3://dylan-ecommerce-data-pipeline/bronze/customers/customers.csv
+2026-04-10 07:21:19,125 | INFO | Uploaded: data/source/customers.csv -> s3://dylan-ecommerce-data-pipeline/bronze/customers/customers.csv
+2026-04-10 07:21:19,185 | INFO | Uploaded: data/source/customers.csv -> s3://dylan-ecommerce-data-pipeline/bronze/customers/customers.csv
+2026-04-10 07:21:20,637 | INFO | Uploaded: data/source/customers.csv -> s3://dylan-ecommerce-data-pipeline/bronze/customers/customers.csv
+2026-04-10 07:21:30,960 | INFO | Uploaded: data/source/orders.csv -> s3://dylan-ecommerce-data-pipeline/bronze/orders/orders.csv
+2026-04-10 07:21:32,364 | INFO | Uploaded: data/source/orders.csv -> s3://dylan-ecommerce-data-pipeline/bronze/orders/orders.csv
+2026-04-10 07:21:33,695 | INFO | Uploaded: data/source/orders.csv -> s3://dylan-ecommerce-data-pipeline/bronze/orders/orders.csv
+2026-04-10 07:21:34,973 | INFO | Uploaded: data/source/orders.csv -> s3://dylan-ecommerce-data-pipeline/bronze/orders/orders.csv
+2026-04-10 07:21:35,057 | INFO | Uploaded: data/source/orders.csv -> s3://dylan-ecommerce-data-pipeline/bronze/orders/orders.csv
+2026-04-10 07:21:42,887 | INFO | Uploaded: data/source/order_items.csv -> s3://dylan-ecommerce-data-pipeline/bronze/order_items/order_items.csv
+2026-04-10 07:21:45,873 | INFO | Uploaded: data/source/order_items.csv -> s3://dylan-ecommerce-data-pipeline/bronze/order_items/order_items.csv
+2026-04-10 07:21:46,971 | INFO | Uploaded: data/source/order_items.csv -> s3://dylan-ecommerce-data-pipeline/bronze/order_items/order_items.csv
+2026-04-10 07:21:47,366 | INFO | Uploaded: data/source/order_items.csv -> s3://dylan-ecommerce-data-pipeline/bronze/order_items/order_items.csv
+2026-04-10 07:21:47,689 | INFO | Uploaded: data/source/order_items.csv -> s3://dylan-ecommerce-data-pipeline/bronze/order_items/order_items.csv
+2026-04-10 07:21:48,071 | INFO | Uploaded: data/source/order_payments.csv -> s3://dylan-ecommerce-data-pipeline/bronze/order_payments/order_payments.csv
+2026-04-10 07:21:52,055 | INFO | Uploaded: data/source/order_payments.csv -> s3://dylan-ecommerce-data-pipeline/bronze/order_payments/order_payments.csv
+2026-04-10 07:21:54,551 | INFO | Uploaded: data/source/order_payments.csv -> s3://dylan-ecommerce-data-pipeline/bronze/order_payments/order_payments.csv
+2026-04-10 07:21:57,230 | INFO | Uploaded: data/source/order_reviews.csv -> s3://dylan-ecommerce-data-pipeline/bronze/order_reviews/order_reviews.csv
+2026-04-10 07:21:59,708 | INFO | Uploaded: data/source/products.csv -> s3://dylan-ecommerce-data-pipeline/bronze/products/products.csv
+2026-04-10 07:21:59,926 | INFO | Uploaded: data/source/order_payments.csv -> s3://dylan-ecommerce-data-pipeline/bronze/order_payments/order_payments.csv
+2026-04-10 07:21:59,933 | INFO | Uploaded: data/source/sellers.csv -> s3://dylan-ecommerce-data-pipeline/bronze/sellers/sellers.csv
+2026-04-10 07:22:00,004 | INFO | Uploaded: data/source/product_category_name_translation.csv -> s3://dylan-ecommerce-data-pipeline/bronze/product_category_name_translation/product_category_name_translation.csv
+2026-04-10 07:22:00,005 | INFO | Finished Bronze ingestion. Uploaded=8 Failed=0
+2026-04-10 07:22:00,055 | INFO | Uploaded: data/source/order_reviews.csv -> s3://dylan-ecommerce-data-pipeline/bronze/order_reviews/order_reviews.csv
+2026-04-10 07:22:02,285 | INFO | Uploaded: data/source/products.csv -> s3://dylan-ecommerce-data-pipeline/bronze/products/products.csv
+2026-04-10 07:22:02,479 | INFO | Uploaded: data/source/sellers.csv -> s3://dylan-ecommerce-data-pipeline/bronze/sellers/sellers.csv
+2026-04-10 07:22:02,578 | INFO | Uploaded: data/source/product_category_name_translation.csv -> s3://dylan-ecommerce-data-pipeline/bronze/product_category_name_translation/product_category_name_translation.csv
+2026-04-10 07:22:02,578 | INFO | Finished Bronze ingestion. Uploaded=8 Failed=0
+2026-04-10 07:22:03,644 | INFO | Uploaded: data/source/order_reviews.csv -> s3://dylan-ecommerce-data-pipeline/bronze/order_reviews/order_reviews.csv
+2026-04-10 07:22:05,241 | INFO | Uploaded: data/source/products.csv -> s3://dylan-ecommerce-data-pipeline/bronze/products/products.csv
+2026-04-10 07:22:05,341 | INFO | Uploaded: data/source/order_reviews.csv -> s3://dylan-ecommerce-data-pipeline/bronze/order_reviews/order_reviews.csv
+2026-04-10 07:22:05,360 | INFO | Uploaded: data/source/sellers.csv -> s3://dylan-ecommerce-data-pipeline/bronze/sellers/sellers.csv
+2026-04-10 07:22:05,391 | INFO | Uploaded: data/source/order_payments.csv -> s3://dylan-ecommerce-data-pipeline/bronze/order_payments/order_payments.csv
+2026-04-10 07:22:05,421 | INFO | Uploaded: data/source/product_category_name_translation.csv -> s3://dylan-ecommerce-data-pipeline/bronze/product_category_name_translation/product_category_name_translation.csv
+2026-04-10 07:22:05,422 | INFO | Finished Bronze ingestion. Uploaded=8 Failed=0
+2026-04-10 07:22:06,307 | INFO | Uploaded: data/source/products.csv -> s3://dylan-ecommerce-data-pipeline/bronze/products/products.csv
+2026-04-10 07:22:06,482 | INFO | Uploaded: data/source/sellers.csv -> s3://dylan-ecommerce-data-pipeline/bronze/sellers/sellers.csv
+2026-04-10 07:22:06,582 | INFO | Uploaded: data/source/product_category_name_translation.csv -> s3://dylan-ecommerce-data-pipeline/bronze/product_category_name_translation/product_category_name_translation.csv
+2026-04-10 07:22:06,583 | INFO | Finished Bronze ingestion. Uploaded=8 Failed=0
+2026-04-10 07:22:08,377 | INFO | Uploaded: data/source/order_reviews.csv -> s3://dylan-ecommerce-data-pipeline/bronze/order_reviews/order_reviews.csv
+2026-04-10 07:22:08,865 | INFO | Uploaded: data/source/products.csv -> s3://dylan-ecommerce-data-pipeline/bronze/products/products.csv
+2026-04-10 07:22:08,952 | INFO | Uploaded: data/source/sellers.csv -> s3://dylan-ecommerce-data-pipeline/bronze/sellers/sellers.csv
+2026-04-10 07:22:09,013 | INFO | Uploaded: data/source/product_category_name_translation.csv -> s3://dylan-ecommerce-data-pipeline/bronze/product_category_name_translation/product_category_name_translation.csv
+2026-04-10 07:22:09,013 | INFO | Finished Bronze ingestion. Uploaded=8 Failed=0

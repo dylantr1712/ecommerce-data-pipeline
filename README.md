@@ -20,13 +20,58 @@ The dataset represents an ecommerce platform containing customer orders, payment
 
 Key concepts demonstrated in this project include:
 
-- OLTP → OLAP transformation
+- OLTP -> OLAP transformation
 - Dimensional modelling
 - Star schema design
 - Slowly Changing Dimension (SCD Type 2)
 - Modern ELT architecture
 - Cloud-native data pipeline orchestration
 
+
+---
+
+
+# 1.1 Current Status (2026-04-10)
+
+- End-to-end pipeline runs successfully in Airflow (S3 -> EMR Serverless -> Redshift -> dbt snapshot/run/test -> Slack).
+- Slack notifications are enabled via Airflow connection `slack_webhook_default`.
+- AWS CLI is not required inside Airflow containers (S3 script upload uses boto3).
+- Airflow Variables required: `S3_BUCKET` (optional), `EMR_SERVERLESS_APPLICATION_ID`, `EMR_EXECUTION_ROLE_ARN`, `EMR_LOG_URI`, `SPARK_SCRIPT_URI` (optional).
+- Environment variables required in `.env`: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_DEFAULT_REGION`, `AWS_S3_BUCKET_NAME`, `REDSHIFT_HOST`, `REDSHIFT_DATABASE`, `REDSHIFT_USER`, `REDSHIFT_PASSWORD`, `REDSHIFT_PORT`.
+
+---
+
+# 1.2 Runbook
+
+## Run Locally
+
+1. Create or update `.env` with AWS and Redshift credentials.
+2. Start Airflow: `docker compose -f docker-compose.yaml up -d`.
+3. Open Airflow UI: `http://localhost:8080`.
+4. Trigger the DAG: `ecommerce_end_to_end_pipeline`.
+
+## Required AWS Resources
+
+1. S3 bucket for Bronze/Silver and EMR logs.
+2. EMR Serverless application ID.
+3. IAM execution role for EMR Serverless with access to S3 and Redshift.
+4. Redshift cluster or serverless workgroup with network access from your environment.
+
+## Airflow Variables
+
+1. `S3_BUCKET` (optional)
+2. `EMR_SERVERLESS_APPLICATION_ID`
+3. `EMR_EXECUTION_ROLE_ARN`
+4. `EMR_LOG_URI`
+5. `SPARK_SCRIPT_URI` (optional)
+
+## Debugging
+
+1. Airflow task logs: UI -> DAG -> Task -> Logs.
+2. EMR Serverless logs: `EMR_LOG_URI` in S3 (per job run ID).
+3. Redshift load failures: check `stl_load_errors` and `svl_s3log` in Redshift.
+4. dbt failures: review `logs/dbt.log` or Airflow task logs.
+5. Slack failures: verify Airflow connection `slack_webhook_default`.
 
 ---
 
@@ -61,9 +106,9 @@ The source schema follows a typical **OLTP design**:
 
 Example relationships:
 
-- 1 customer → many orders  
-- 1 order → many order items  
-- 1 order → many payments  
+- 1 customer -> many orders  
+- 1 order -> many order items  
+- 1 order -> many payments  
 
 While suitable for transactional workloads, this structure is not optimized for analytical queries because it requires heavy joins and can cause duplication in aggregations.
 
@@ -75,17 +120,17 @@ While suitable for transactional workloads, this structure is not optimized for 
 The pipeline is designed following a **modern cloud data engineering architecture**.
 
 Raw CSV Dataset  
-↓  
+->  
 Amazon S3 (Bronze Layer)  
-↓  
+->  
 Spark Processing (EMR Serverless)  
-↓  
+->  
 Amazon S3 (Silver Layer)  
-↓  
+->  
 Amazon Redshift (Data Warehouse)  
-↓  
+->  
 dbt Transformations  
-↓  
+->  
 Analytics / BI Layer  
 
 Pipeline orchestration is handled by **Apache Airflow**, running locally through **Docker Compose**.
@@ -152,13 +197,13 @@ Data modelling and transformations are managed using **dbt**.
 
 ```
 RAW
-  ↓
+  ->
 STAGING
-  ↓
+  ->
 INTERMEDIATE
-  ↓
+  ->
 DIMENSIONS
-  ↓
+  ->
 FACTS
 ```
 
@@ -335,6 +380,7 @@ dags/
 scripts/
    ingestion/
       upload_to_s3.py
+      upload_script_to_s3.py
    spark/
       bronze_to_silver.py
    loaders/
@@ -367,6 +413,8 @@ docker-compose.yaml
 dbt_project.yml
 packages.yml
 requirements.txt
+.dbt/
+   profiles.yml
 ```
 
 
